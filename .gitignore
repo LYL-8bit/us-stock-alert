@@ -1,0 +1,23 @@
+# 敏感配置（含 Bark key / VLESS 凭据 / 心跳URL）——绝不提交
+config.yaml
+xray-config.json
+*.env
+
+# 含硬编码 Bark key 的本地测试脚本
+test_bark.py
+test_bark2.py
+
+# 运行时数据
+seen.db
+*.db
+
+# Xray 二进制（自行下载，不入库）
+Xray-linux-64.zip
+xray-extracted/
+xray
+
+# Python
+__pycache__/
+*.pyc
+venv/
+.venv/

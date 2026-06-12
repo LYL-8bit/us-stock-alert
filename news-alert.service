@@ -1,0 +1,18 @@
+[Unit]
+Description=US Stock Realtime 8-K Alert Service
+After=network.target xray.service
+Wants=xray.service
+
+[Service]
+Type=simple
+User=newsbot
+WorkingDirectory=/opt/news-alert
+EnvironmentFile=/etc/news-alert.env
+ExecStart=/opt/news-alert/venv/bin/python /opt/news-alert/alert_service.py
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
