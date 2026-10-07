@@ -21,11 +21,11 @@ systemd: news-alert.service
   └─ 每轮 ping 一次 UptimeKuma 心跳
 
 systemd: xray.service
-  └─ VLESS Reality 出站，本地监听 127.0.0.1:10808 SOCKS5
+  └─ 代理出站，本地监听 127.0.0.1:10808 SOCKS5
      仅 Grok 调用走它；SEC 抓取与 Bark 推送均直连
 ```
 
-**网络要点**：该机器对 SEC、Bark 可直连，但 Grok（api.x.ai）被墙——所以只有 Grok 这一步走代理。检测与推送这两条时效关键路径不依赖代理。
+**网络要点**：该机器对 SEC、Bark 可直连，但 Grok（api.x.ai）需经代理访问，所以只有 Grok 这一步走代理。检测与推送这两条时效关键路径不依赖代理。
 
 ---
 
@@ -36,11 +36,12 @@ systemd: xray.service
 | `alert_service.py` | 主服务：轮询 / 解读 / 去重 / 推送 |
 | `config.yaml` | 配置：watchlist、轮询间隔、Bark、代理、心跳（**含敏感信息，不进 git**）|
 | `news-alert.service` | 主服务 systemd 单元 |
-| `xray-config.json` | Xray 客户端配置（**含 VLESS 凭据，不进 git**）|
+| `xray-config.json` | Xray 客户端配置（**含代理凭据，不进 git**）|
 | `xray.service` | Xray systemd 单元 |
 | `requirements.txt` | Python 依赖：requests、requests[socks]、PyYAML |
 | `seen.db` | SQLite 去重库（自动生成）|
 | `/etc/news-alert.env` | Grok API 密钥（`chmod 600`，由 systemd 注入，**不进 git**）|
+| `scripts/` | 手动调试脚本：端到端推送测试、CIK 查询、重放最新申报（需在部署机 `/opt/news-alert` 下运行）|
 
 仓库里带 `.example` 后缀的是脱敏模板，部署时复制成实名文件再填。
 
@@ -135,4 +136,4 @@ systemctl daemon-reload && systemctl enable --now news-alert
 
 - Grok 密钥只在 `/etc/news-alert.env`（`chmod 600`），由 systemd 注入环境变量，不落代码、不进 git
 - 服务以无登录权限的 `newsbot` 用户运行
-- VLESS 凭据、Bark key 在 `.gitignore` 内，不进仓库
+- 代理凭据、Bark key 在 `.gitignore` 内，不进仓库
